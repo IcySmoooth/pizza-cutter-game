@@ -24,6 +24,17 @@ options = {};
  */
 let slices;
 
+/**
+ * @typedef {{
+ *  pos: Vector
+ * }} Cutter
+ */
+
+/**
+ * @type {Cutter}
+ */
+let cutter;
+
 
 
 
@@ -33,10 +44,18 @@ function update() {
 			pos: vec(50, 50)
 		};
 
-    slices = [-2, 0, 2];
+    cutter = {
+      pos: vec(0, 50)
+    };
+
+    slices = [-2, 2];
   }
 
   generatePizza(pizza, slices)
+
+  if (input.isJustPressed) {
+    slices.push(cutter.pos.angleTo(pizza.pos));
+  }
 }
 
 /**
@@ -82,28 +101,28 @@ function generatePizza(pizza, slices) {
   }*/
 
   color(lightColor);
-  arc(50, 50, 10, 50, -PI, PI);
+  arc(pizza.pos, 10, 50, -PI, PI);
 
   color(colors);
-  arc(50, 50, 40, 10, -PI, PI);
+  arc(pizza.pos, 40, 10, -PI, PI);
 
 
-  generateCuts(50, 50, slices);
+  generateCuts(pizza.pos.x, pizza.pos.y, 50, slices);
 }
 /**
  * @param {number} centerX
  * @param {number} centerY
+ * @param {number} radius
  * @param {Array<number>} slices 
  */
-function generateCuts(centerX, centerY, slices) {
+function generateCuts(centerX, centerY, radius, slices) {
   /**
    * @type{{x: number, y: number}}
    */
   let point;
   slices.forEach(slice => {
-    point = getPoint(50, slice);
+    point = getPoint(radius, slice);
     color("black");
-    console.log(point);
     line(centerX + point.x, centerY + point.y, centerX - point.x, centerY - point.y, 1);
   });
 }
