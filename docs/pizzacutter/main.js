@@ -71,20 +71,6 @@ options = {};
  */
 let slices;
 
-/**
- * @typedef {{
- *  pos: Vector
- * }} Cutter
- */
-
-/**
- * @type {Cutter}
- */
-let cutter;
-
-
-
-
 function update() {
   if (!ticks) {
     pizza = {
@@ -98,19 +84,14 @@ function update() {
 		};
     cutter = {
       pos: vec(50, 95)
-  };
-  }
-			pos: vec(50, 50)
-		};
-
-    cutter = {
-      pos: vec(0, 50)
     };
-
-    slices = [-2, 2];
+    slices = [-1, 1];
   }
 
-  generatePizza(pizza, slices)
+  generatePizza(pizza, pepperoni, olive, slices);
+  
+  color("light_black");
+  char("a", cutter.pos);
 
   if (input.isJustPressed) {
     slices.push(cutter.pos.angleTo(pizza.pos));
@@ -122,7 +103,7 @@ function update() {
  * @param {Array<number>} slices 
  */
 
-function generatePizza(pizza, slices) {
+function generatePizza(pizza, pepperoni, olive, slices) {
   slices.sort();
 
   /**
@@ -134,11 +115,18 @@ function generatePizza(pizza, slices) {
    */
   let lightColor = "light_yellow";
 
-  color(lightColor);
-  arc(pizza.pos, 10, 50, -PI, PI);
+  color("light_yellow");
+  arc(pizza.pos, 10, 33, -PI, PI);
 
-  color(colors);
-  arc(pizza.pos, 40, 10, -PI, PI);
+  color("yellow");
+  arc(pizza.pos, 30, 7, -PI, PI);
+
+  color("red");
+	arc(pepperoni.pos, 3, 4.5, 0, 3);
+	arc(pepperoni.pos, 3, 4.5, 0, -3.2);
+
+  color("black");
+	char("b", olive.pos);
 
 
   generateCuts(pizza.pos.x, pizza.pos.y, 50, slices);
@@ -180,21 +168,4 @@ function getPoint(radius, angle) {
   y = radius * cos(angle);
 
   return vec(x, y);
-  color("light_yellow");
-	arc(pizza.pos, 10, 33, 0, 3);
-	arc(pizza.pos, 10, 33, 0, -3.2);
-
-	color("yellow");
-	arc(pizza.pos, 30, 7, 0, 3);
-	arc(pizza.pos, 30, 7, 0, -3.2);
-
-  color("red");
-	arc(pepperoni.pos, 3, 4.5, 0, 3);
-	arc(pepperoni.pos, 3, 4.5, 0, -3.2);
-
-  color("black");
-	char("b", olive.pos);
-
-  color("light_black");
-  char("a", cutter.pos);
 }
