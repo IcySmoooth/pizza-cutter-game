@@ -3,7 +3,22 @@ title = "Pizza Cutter";
 description = `
 `;
 
-characters = [];
+characters = [
+  `
+  l
+  l
+ lll
+ lll
+lllll
+lllll
+  `,
+  `
+ ll
+l  l
+l  l
+ ll
+  `
+];
 
 options = {};
 
@@ -18,40 +33,65 @@ options = {};
   * @type { Pizza }
   */
   let pizza;
+/**
+*@typedef {{
+  *	 pos: Vector
+  * }} Pepperoni
+  */
+  
+  /**
+  * @type { Pepperoni [] }
+  */
+  let pepperoni;
+  /**
+*@typedef {{
+  *	 pos: Vector
+  * }} Olive
+  */
+  
+  /**
+  * @type { Olive [] }
+  */
+  let olive;
+  
+  /**
+ * @typedef {{
+ * pos: Vector,
+  * }} Cutter
+  */
+ 
+ /**
+  * @type { Cutter }
+  */
+ let cutter;
+  
 
 /**
  * @type {Array<number>} 
  */
 let slices;
 
-/**
- * @typedef {{
- *  pos: Vector
- * }} Cutter
- */
-
-/**
- * @type {Cutter}
- */
-let cutter;
-
-
-
-
 function update() {
   if (!ticks) {
     pizza = {
-			pos: vec(50, 50)
+			pos: vec(50, 55)
 		};
-
+    pepperoni = {
+			pos: vec(60, 40)
+		};
+    olive = {
+			pos: vec(40, 50)
+		};
     cutter = {
-      pos: vec(0, 50)
+      pos: vec(50, 95)
     };
-
-    slices = [-2, 2];
+    slices = [-1, 1];
   }
 
-  generatePizza(pizza, slices)
+  generatePizza(pizza, pepperoni, olive, slices);
+  
+  color("light_black");
+  char("a", cutter.pos);
 
   if (input.isJustPressed) {
     slices.push(cutter.pos.angleTo(pizza.pos));
@@ -63,7 +103,7 @@ function update() {
  * @param {Array<number>} slices 
  */
 
-function generatePizza(pizza, slices) {
+function generatePizza(pizza, pepperoni, olive, slices) {
   slices.sort();
 
   /**
@@ -75,11 +115,18 @@ function generatePizza(pizza, slices) {
    */
   let lightColor = "light_yellow";
 
-  color(lightColor);
-  arc(pizza.pos, 10, 50, -PI, PI);
+  color("light_yellow");
+  arc(pizza.pos, 10, 33, -PI, PI);
 
-  color(colors);
-  arc(pizza.pos, 40, 10, -PI, PI);
+  color("yellow");
+  arc(pizza.pos, 30, 7, -PI, PI);
+
+  color("red");
+	arc(pepperoni.pos, 3, 4.5, 0, 3);
+	arc(pepperoni.pos, 3, 4.5, 0, -3.2);
+
+  color("black");
+	char("b", olive.pos);
 
 
   generateCuts(pizza.pos.x, pizza.pos.y, 50, slices);
