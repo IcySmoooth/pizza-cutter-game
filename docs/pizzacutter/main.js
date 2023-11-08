@@ -60,13 +60,11 @@ function update() {
 
 /**
  * @param {Pizza} pizza
- * @param {Array<Number>} slices 
+ * @param {Array<number>} slices 
  */
 
 function generatePizza(pizza, slices) {
   slices.sort();
-
-
 
   /**
    * @type {Color}
@@ -117,7 +115,7 @@ function generatePizza(pizza, slices) {
  */
 function generateCuts(centerX, centerY, radius, slices) {
   /**
-   * @type{{x: number, y: number}}
+   * @type{Vector}
    */
   let point;
   slices.forEach(slice => {
@@ -130,7 +128,7 @@ function generateCuts(centerX, centerY, radius, slices) {
  * 
  * @param {number} radius 
  * @param {number} angle 
- * @returns {{x: number, y:number}}
+ * @returns {Vector}
  */
 function getPoint(radius, angle) {
   /**
@@ -145,6 +143,6 @@ function getPoint(radius, angle) {
   x = radius * sin(angle);
   y = radius * cos(angle);
 
-  return {x: x, y: y}
+  return vec(x, y);
 }
 
