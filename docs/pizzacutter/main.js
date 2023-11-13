@@ -24,11 +24,10 @@ options = {};
 
 /**
 *@typedef {{
-  *	 pos: Vector
-  * }} Pizza
-  */
+*	 pos: Vector
+* }} Pizza
+*/
 
-    
 /**
 * @type { Pizza }
 */
@@ -36,9 +35,9 @@ let pizza;
 
 /**
 *@typedef {{
-  *	 pos: Vector
-  * }} Pepperoni
-  */
+*	 pos: Vector
+* }} Pepperoni
+*/
   
 /**
 * @type { Pepperoni [] }
@@ -47,9 +46,9 @@ let pepperoni;
 
 /**
 *@typedef {{
-  *	 pos: Vector
-  * }} Olive
-  */
+*	 pos: Vector
+* }} Olive
+*/
   
 /**
 * @type { Olive [] }
@@ -79,6 +78,11 @@ let cutter;
  * @type {Boolean}
  */
 let cutterIsRotating;
+
+/**
+ * @type {Boolean}
+ */
+let cutterCollisionExecuted = false;
 
 function update() {
   if (!ticks) {
@@ -110,14 +114,11 @@ function update() {
   char("a", cutter.pos, {rotation: cutter.rotation});
 
   if (cutterIsRotating){
-    moveCutter(cutter);
+    moveCutter();
   }
 
-  console.log(cutter.pos.angleTo(pizza.pos), " or ", pizza.pos.angleTo(cutter.pos));
   if (input.isJustPressed) {
     cutterIsRotating = false;
-    slices.push(pizza.pos.angleTo(cutter.pos));
-    console.log(cutter.pos);
   }
 }
 
@@ -130,15 +131,6 @@ function update() {
 
 function generatePizza(pizza, pepperoni, olive, slices) {
   slices.sort();
-
-  /**
-   * @type {Color}
-   */
-  let colors = "yellow";
-  /**
-   * @type {Color}
-   */
-  let lightColor = "light_yellow";
 
   color("light_yellow");
   arc(pizza.pos, 10, 33, -PI, PI);
@@ -164,20 +156,29 @@ function generatePizza(pizza, pepperoni, olive, slices) {
  */
 function generateCuts(centerX, centerY, radius, slices) {
   /**
-   * @type{Vector}
-   */
+  * @type{Vector}
+  */
   let point;
   slices.forEach(slice => {
     point = getPoint(radius, slice);
     color("black");
     line(centerX + point.x, centerY + point.y, centerX - point.x, centerY - point.y, 1);
   });
+
+  // I unfortunately could not get the cutter line to work with the getPoint function, so I offer my own implementation
+  if (!cutterIsRotating) {
+    let oliveCollision = line(cutter.pos.x, cutter.pos.y, 2 * centerX - cutter.pos.x, 2 * centerY - cutter.pos.y, 1).isColliding.char.b;
+    let pepperoniCollision = line(cutter.pos.x, cutter.pos.y, 2 * centerX - cutter.pos.x, 2 * centerY - cutter.pos.y, 1).isColliding.rect.red;
+    
+    // Check if the cutter collided with any objects and if cutter collided logic hasn't happened yet
+    if (!cutterCollisionExecuted) {
+      cutterCollisionCheck(oliveCollision || pepperoniCollision);
+      cutterCollisionExecuted = true;
+    }
+  }
 }
 
-/**
- * @param {Cutter} cutter
- */
-function moveCutter(cutter) {
+function moveCutter() {
   // Radius of outer edge is 40, angle spans from -pi to pi 
   cutter.pos.x = pizza.pos.x + 40 * Math.cos(cutter.angle);
   cutter.pos.y = pizza.pos.y + 40 * Math.sin(cutter.angle);
@@ -207,6 +208,13 @@ function createLineFromCutter() {
 
   color("red"); // Change color as desired
   line(cutter.pos, vec(endPointX, endPointY));
+}
+
+/**
+ * @param {Boolean} cutterCollided
+ */
+// Cutter collided is set to true if it has collided with any toppings
+function cutterCollisionCheck(cutterCollided) {
 }
 
 /**
