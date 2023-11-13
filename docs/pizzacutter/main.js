@@ -84,24 +84,26 @@ let cutterIsRotating;
  */
 let cutterCollisionExecuted = false;
 
+/**
+ * @type {Number}
+ */
+let endTimerTimeLimit = 60;
+
+/**
+ * @type {Number}
+ */
+let endTimerElapsedTime = 0;
+
 function update() {
   if (!ticks) {
-    pizza = {
-			pos: vec(50, 55)
-		};
-    pepperoni = [{
-      pos: vec(60, 40)
-		}];
-    olive = [{
-			pos: vec(40, 50)
-		}];
-
     cutter = {
       pos: vec(50, 5),
       angle: 0,
       rotation: 0,
       speed: 0.03,
     };
+
+    initializePizza();
 
     cutterIsRotating = true;
 
@@ -117,9 +119,34 @@ function update() {
     moveCutter();
   }
 
-  if (input.isJustPressed) {
+  if (input.isJustPressed && cutterIsRotating) {
+    // Reset timer to start anew
+    endTimerElapsedTime = 0
     cutterIsRotating = false;
   }
+
+  // If the timer at end of level is finished
+  if (!cutterIsRotating && endTimerElapsedTime >= endTimerTimeLimit) {
+    initializePizza();
+  }
+  else if (!cutterIsRotating && endTimerElapsedTime < endTimerTimeLimit) {
+    endTimerElapsedTime++;
+  }
+}
+
+function initializePizza() {
+  pizza = {
+    pos: vec(50, 55)
+  };
+  pepperoni = [{
+    pos: vec(60, 40)
+  }];
+  olive = [{
+    pos: vec(40, 50)
+  }];
+
+  cutterCollisionExecuted = false;
+  cutterIsRotating = true;
 }
 
 /**
