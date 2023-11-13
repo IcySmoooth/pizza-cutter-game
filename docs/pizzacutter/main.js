@@ -3,7 +3,22 @@ title = "Pizza Cutter";
 description = `
 `;
 
-characters = [];
+characters = [
+  `
+  l
+  l
+ lll
+ lll
+lllll
+lllll
+  `,
+  `
+ ll
+l  l
+l  l
+ ll
+  `
+];
 
 options = {};
 
@@ -14,10 +29,32 @@ options = {};
   */
 
     
-  /**
-  * @type { Pizza }
+/**
+* @type { Pizza }
+*/
+let pizza;
+
+/**
+*@typedef {{
+  *	 pos: Vector
+  * }} Pepperoni
   */
-  let pizza;
+  
+/**
+* @type { Pepperoni [] }
+*/
+let pepperoni;
+
+/**
+*@typedef {{
+  *	 pos: Vector
+  * }} Olive
+  */
+  
+/**
+* @type { Olive [] }
+*/
+let olive;
 
 /**
  * @type {Array<number>} 
@@ -26,28 +63,17 @@ let slices;
 
 /**
  * @typedef {{
- *  pos: Vector
- * }} Cutter
- */
+*     pos: Vector
+*     angle: Number
+*     rotation: Number
+*     speed: Number
+*   }} Cutter
+*/
 
 /**
  * @type {Cutter}
  */
 let cutter;
-
-/**
- * @typedef {{
-*  pos: Vector
-*  angle: Number
-*  rotation: Number
-*  speed: Number
-* }} CutterSprite
-*/
-
-/**
- * @type {CutterSprite}
- */
-let cutterSprite;
 
 /**
  * @type {Boolean}
@@ -57,14 +83,16 @@ let cutterIsRotating;
 function update() {
   if (!ticks) {
     pizza = {
-			pos: vec(50, 50)
+			pos: vec(50, 55)
 		};
+    pepperoni = [{
+      pos: vec(60, 40)
+		}];
+    olive = [{
+			pos: vec(40, 50)
+		}];
 
     cutter = {
-      pos: vec(0, 50)
-    };
-
-    cutterSprite = {
       pos: vec(50, 5),
       angle: 0,
       rotation: 0,
@@ -73,29 +101,34 @@ function update() {
 
     cutterIsRotating = true;
 
-    slices = [-2, 2];
+    slices = [-1, 1];
   }
+  
+  generatePizza(pizza, pepperoni, olive, slices);
 
-  generatePizza(pizza, slices)
-
-  box(cutterSprite.pos, 6);
+  color("light_black");
+  char("a", cutter.pos, {rotation: cutter.rotation});
 
   if (cutterIsRotating){
-    moveCutter(cutterSprite);
+    moveCutter(cutter);
   }
 
+  console.log(cutter.pos.angleTo(pizza.pos), " or ", pizza.pos.angleTo(cutter.pos));
   if (input.isJustPressed) {
     cutterIsRotating = false;
-    slices.push(cutterSprite.angle);
+    slices.push(pizza.pos.angleTo(cutter.pos));
+    console.log(cutter.pos);
   }
 }
 
 /**
  * @param {Pizza} pizza
+ * @param {Array<Pepperoni>} pepperoni
+ * @param {Array<Olive>} olive
  * @param {Array<number>} slices 
  */
 
-function generatePizza(pizza, slices) {
+function generatePizza(pizza, pepperoni, olive, slices) {
   slices.sort();
 
   /**
@@ -107,11 +140,18 @@ function generatePizza(pizza, slices) {
    */
   let lightColor = "light_yellow";
 
-  color(lightColor);
-  arc(pizza.pos, 10, 50, -PI, PI);
+  color("light_yellow");
+  arc(pizza.pos, 10, 33, -PI, PI);
 
-  color(colors);
-  arc(pizza.pos, 40, 10, -PI, PI);
+  color("yellow");
+  arc(pizza.pos, 30, 7, -PI, PI);
+
+  color("red");
+	arc(pepperoni[0].pos, 3, 4.5, 0, 3);
+	arc(pepperoni[0].pos, 3, 4.5, 0, -3.2);
+
+  color("black");
+	char("b", olive[0].pos);
 
 
   generateCuts(pizza.pos.x, pizza.pos.y, 50, slices);
@@ -134,21 +174,41 @@ function generateCuts(centerX, centerY, radius, slices) {
   });
 }
 
-function moveCutter(cutterSprite) {
+/**
+ * @param {Cutter} cutter
+ */
+function moveCutter(cutter) {
   // Radius of outer edge is 40, angle spans from -pi to pi 
-  cutterSprite.pos.x = pizza.pos.x + 40 * Math.cos(cutterSprite.angle);
-  cutterSprite.pos.y = pizza.pos.y + 40 * Math.sin(cutterSprite.angle);
+  cutter.pos.x = pizza.pos.x + 40 * Math.cos(cutter.angle);
+  cutter.pos.y = pizza.pos.y + 40 * Math.sin(cutter.angle);
   
-  //cutterSprite.angle = cutterSprite.pos.angleTo(pizza.pos);
+  cutter.angle += cutter.speed;
+  // Added a speed modifier and an angle offset to the cutter's rotation, I have no idea why this works but it actually works
+  cutter.rotation = (cutter.pos.angleTo(pizza.pos) * 0.65) + 1;
 
-  cutterSprite.angle += cutterSprite.speed;
-
-  if (cutterSprite.angle > PI) {
-    cutterSprite.angle = -PI;
-  } else if (cutterSprite.angle < -PI) {
-    cutterSprite.angle = PI;
+  if (cutter.angle > PI){
+    cutter.angle = -PI;
+  } 
+  else if (cutter.angle < -PI){
+    cutter.angle = PI;
   }
 }
+
+function createLineFromCutter() {
+  // Calculate the endpoint of the line using the cutter's position and angle
+  /**
+  * @type {Number}
+  */
+  const endPointX = cutter.pos.x + 50 * Math.cos(cutter.angle); // Adjust line length (50) as needed
+  /**
+  * @type {Number}
+  */
+  const endPointY = cutter.pos.y + 50 * Math.sin(cutter.angle); // Adjust line length (50) as needed
+
+  color("red"); // Change color as desired
+  line(cutter.pos, vec(endPointX, endPointY));
+}
+
 /**
  * 
  * @param {number} radius 
