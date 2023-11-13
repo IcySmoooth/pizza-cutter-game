@@ -244,6 +244,7 @@ function createLineFromCutter() {
 function cutterCollisionCheck(cutterCollided) {
 }
 
+
 /**
  * 
  * @param {number} radius 
