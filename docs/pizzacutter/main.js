@@ -102,9 +102,7 @@ function update() {
       rotation: 0,
       speed: 0.03,
     };
-
     initializePizza();
-
     cutterIsRotating = true;
 
     slices = [-1, 1];
@@ -165,15 +163,8 @@ function generatePizza(pizza, pepperoni, olive, slices) {
   color("yellow");
   arc(pizza.pos, 30, 7, -PI, PI);
 
-  color("red");
-	arc(pepperoni[0].pos, 3, 4.5, 0, 3);
-	arc(pepperoni[0].pos, 3, 4.5, 0, -3.2);
-
-  color("black");
-	char("b", olive[0].pos);
-
-
   generateCuts(pizza.pos.x, pizza.pos.y, 50, slices);
+  generateToppings(pepperoni, olive)
 }
 /**
  * @param {number} centerX
@@ -265,4 +256,29 @@ function getPoint(radius, angle) {
   y = radius * cos(angle);
 
   return vec(x, y);
+}
+
+function generateToppings(pepperoni, olive){
+  //manual setting of location, can change to random in future
+  //or change hardcoded locations of toppings
+  color("red");
+  arc(pepperoni.pos, 3, 4.5, 0, 3);
+  arc(pepperoni.pos, 3, 4.5, 0, -3.2);
+  pepperoni.pos = vec(40,30);
+  arc(pepperoni.pos, 3, 4.5, 0, 3);
+  arc(pepperoni.pos, 3, 4.5, 0, -3.2);
+  pepperoni.pos = vec(60,30);
+  arc(pepperoni.pos, 3, 4.5, 0, 3);
+  arc(pepperoni.pos, 3, 4.5, 0, -3.2);
+  pepperoni.pos = vec(30,50);
+  arc(pepperoni.pos, 3, 4.5, 0, 3);
+  arc(pepperoni.pos, 3, 4.5, 0, -3.2);
+  pepperoni.pos = vec(70,60);
+  color("black");
+  olive.pos = vec(45,45);
+	char("b", olive.pos);
+  olive.pos = vec(40,30);
+	char("b", olive.pos);
+  olive.pos = vec(36,70);
+	char("b", olive.pos);
 }
