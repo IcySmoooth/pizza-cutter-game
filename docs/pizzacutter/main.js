@@ -105,7 +105,7 @@ function update() {
     initializePizza();
     cutterIsRotating = true;
 
-    slices = [-1, 1];
+    slices = [/*-1, 1*/];
   }
 
   generatePizza(pizza, pepperoni, olive, slices);
@@ -162,9 +162,9 @@ function generatePizza(pizza, pepperoni, olive, slices) {
 
   color("yellow");
   arc(pizza.pos, 30, 7, -PI, PI);
-
-  generateCuts(pizza.pos.x, pizza.pos.y, 50, slices);
+  
   generateToppings(pepperoni, olive)
+  generateCuts(pizza.pos.x, pizza.pos.y, 50, slices);
 }
 /**
  * @param {number} centerX
@@ -185,6 +185,7 @@ function generateCuts(centerX, centerY, radius, slices) {
 
   // I unfortunately could not get the cutter line to work with the getPoint function, so I offer my own implementation
   if (!cutterIsRotating) {
+    color("black");
     let oliveCollision = line(cutter.pos.x, cutter.pos.y, 2 * centerX - cutter.pos.x, 2 * centerY - cutter.pos.y, 1).isColliding.char.b;
     let pepperoniCollision = line(cutter.pos.x, cutter.pos.y, 2 * centerX - cutter.pos.x, 2 * centerY - cutter.pos.y, 1).isColliding.rect.red;
     
