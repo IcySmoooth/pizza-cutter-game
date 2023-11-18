@@ -1,6 +1,6 @@
 title = "Pizza Cutter";
 
-description = `
+description = `[TAP]\nCUT THE PIZZA
 `;
 
 characters = [
@@ -105,9 +105,9 @@ function update() {
     initializePizza();
     cutterIsRotating = true;
 
-    slices = [-1, 1];
+    slices = [/*-1, 1*/];
   }
-  
+
   generatePizza(pizza, pepperoni, olive, slices);
 
   color("light_black");
@@ -162,9 +162,9 @@ function generatePizza(pizza, pepperoni, olive, slices) {
 
   color("yellow");
   arc(pizza.pos, 30, 7, -PI, PI);
-
-  generateCuts(pizza.pos.x, pizza.pos.y, 50, slices);
+  
   generateToppings(pepperoni, olive)
+  generateCuts(pizza.pos.x, pizza.pos.y, 50, slices);
 }
 /**
  * @param {number} centerX
@@ -185,12 +185,13 @@ function generateCuts(centerX, centerY, radius, slices) {
 
   // I unfortunately could not get the cutter line to work with the getPoint function, so I offer my own implementation
   if (!cutterIsRotating) {
+    color("black");
     let oliveCollision = line(cutter.pos.x, cutter.pos.y, 2 * centerX - cutter.pos.x, 2 * centerY - cutter.pos.y, 1).isColliding.char.b;
     let pepperoniCollision = line(cutter.pos.x, cutter.pos.y, 2 * centerX - cutter.pos.x, 2 * centerY - cutter.pos.y, 1).isColliding.rect.red;
     
     // Check if the cutter collided with any objects and if cutter collided logic hasn't happened yet
     if (!cutterCollisionExecuted) {
-      cutterCollisionCheck(oliveCollision || pepperoniCollision);
+      cutterCollisionCheck(oliveCollision, pepperoniCollision);
       cutterCollisionExecuted = true;
     }
   }
@@ -229,10 +230,26 @@ function createLineFromCutter() {
 }
 
 /**
- * @param {Boolean} cutterCollided
+ * @param {Boolean} collidedWithOlive
+ * @param {Boolean} collidedWithPepperonni
  */
 // Cutter collided is set to true if it has collided with any toppings
-function cutterCollisionCheck(cutterCollided) {
+function cutterCollisionCheck(collidedWithOlive, collidedWithPepperonni) {
+  //game over if pepperonni is hit
+  if(collidedWithPepperonni) {
+    play("explosion")
+    end();
+  }
+  else {
+    //score for successfully not cutting pepperoni
+    addScore(50);
+    play("click");
+    //score for cutting olive
+    if(collidedWithOlive) {
+      addScore(50);
+      play("lucky");
+    }
+  }
 }
 
 
